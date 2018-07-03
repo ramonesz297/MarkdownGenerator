@@ -67,6 +67,11 @@ namespace MarkdownWikiGenerator
                 .ToArray();
         }
 
+        Attribute[] GetAttibutes()
+        {
+
+            return type.GetCustomAttributes(false).Cast<Attribute>().ToArray();
+        }
         EventInfo[] GetEvents()
         {
             return type.GetEvents(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
@@ -191,6 +196,7 @@ namespace MarkdownWikiGenerator
             }
             else
             {
+                BuildTable(mb, "Attributes", GetAttibutes(), commentLookup[type.FullName], x => Beautifier.BeautifyType(x.GetType()), x => x.GetType().Name, x => x.GetType().Name);
                 BuildTable(mb, "Fields", GetFields(), commentLookup[type.FullName], x => Beautifier.BeautifyType(x.FieldType), x => x.Name, x => x.Name);
                 BuildTable(mb, "Properties", GetProperties(), commentLookup[type.FullName], x => Beautifier.BeautifyType(x.PropertyType), x => x.Name, x => x.Name);
                 BuildTable(mb, "Events", GetEvents(), commentLookup[type.FullName], x => Beautifier.BeautifyType(x.EventHandlerType), x => x.Name, x => x.Name);
