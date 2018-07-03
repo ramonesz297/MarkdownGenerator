@@ -183,7 +183,7 @@ namespace MarkdownWikiGenerator
             if (type.IsEnum)
             {
                 var enums = Enum.GetNames(type)
-                    .Select(x => new { Name = x, Value = ((Int32)Enum.Parse(type, x)) })
+                    .Select(x => new { Name = x, Value = (Enum.Parse(type, x)) }) //removed Cast to Int32, if enum was declared in another type - error was appear
                     .OrderBy(x => x.Value)
                     .ToArray();
 
@@ -222,7 +222,9 @@ namespace MarkdownWikiGenerator
             var namespaceRegex = 
                 !string.IsNullOrEmpty(namespaceMatch) ? new Regex(namespaceMatch) : null;
 
-            var markdownableTypes = new[] { Assembly.LoadFrom(dllPath) }
+            var loadFrom = Assembly.LoadFrom(dllPath);
+
+            var markdownableTypes = new[] { loadFrom }
                 .SelectMany(x =>
                 {
                     try
@@ -252,7 +254,7 @@ namespace MarkdownWikiGenerator
             if ( regex == null ) {
                 return true;
             }
-            return regex.IsMatch(type.Namespace != null ? type.Namespace : string.Empty);
+            return regex.IsMatch(type.Namespace ?? string.Empty);
         }
     }
 }

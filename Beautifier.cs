@@ -26,7 +26,21 @@ namespace MarkdownWikiGenerator
 
             var seq = methodInfo.GetParameters().Select(x =>
             {
-                var suffix = x.HasDefaultValue ? (" = " + (x.DefaultValue ?? $"null")) : "";
+                string suffix = "";
+                try
+                {
+                    //in some cases we can get error, for example new DateTime() as default value give error
+                    suffix = x.HasDefaultValue ? (" = " + (x.DefaultValue ?? $"null")) : "";
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+
+                    //if exception was received we can display default value for type
+                    suffix = Activator.CreateInstance(x.ParameterType).ToString();
+                }
+
                 return "`" + BeautifyType(x.ParameterType) + "` " + x.Name + suffix;
             });
 
